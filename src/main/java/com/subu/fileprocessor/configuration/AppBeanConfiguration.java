@@ -4,6 +4,7 @@ import com.subu.fileprocessor.executor.Orchestrator;
 import com.subu.fileprocessor.reader.Reader;
 import com.subu.fileprocessor.reader.Utils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +12,10 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Executors;
 
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class AppBeanConfiguration {
@@ -40,9 +43,11 @@ public class AppBeanConfiguration {
             @Value("${queue.size}") Integer queueSize,
             @Value("${words.to.match}") String wordsToMatch
     ) {
+        Set<String> inputTextMap = Collections.synchronizedSet(new HashSet<>(Arrays.asList(wordsToMatch.split(","))));
+        log.debug("Input Text Map Size: {}", inputTextMap.size());
         return new SharedVariableManager(
                 queueSize,
-                Collections.synchronizedSet(new HashSet<>(Arrays.asList(wordsToMatch.split(","))))
+                inputTextMap
         );
     }
 
