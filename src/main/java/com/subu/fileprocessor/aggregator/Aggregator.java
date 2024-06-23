@@ -1,16 +1,15 @@
-package com.subu.fileprocessor;
+package com.subu.fileprocessor.aggregator;
 
 import com.subu.fileprocessor.models.Offset;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class Aggregator {
-
-    public static void display(ConcurrentHashMap<String, ArrayList<Offset>> offsetMap) {
+    public static void display(HashMap<String, ArrayList<Offset>> offsetMap) {
         log.info("OffsetMap Size: {}", offsetMap.size());
         StringBuilder location = new StringBuilder();
         location.append("\n");

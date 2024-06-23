@@ -1,26 +1,25 @@
-package com.subu.fileprocessor;
+package com.subu.fileprocessor.reader;
 
-import com.subu.fileprocessor.common.SharedVariableManager;
+import com.subu.fileprocessor.configuration.SharedVariableManager;
 import com.subu.fileprocessor.models.Batch;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class Reader implements Runnable {
+    @Value("${file.path}")
     private final String filePath;
-    private final int batchSize;
+    @Value("${batch.size}")
+    private final Integer batchSize;
     private final SharedVariableManager sharedVariableManager;
-
-
-    public Reader(String filePath, int batchSize, SharedVariableManager sharedVariableManager) {
-        this.filePath = filePath;
-        this.batchSize = batchSize;
-        this.sharedVariableManager = sharedVariableManager;
-    }
+    private final Utils readerUtils;
 
     @Override
     public void run() {
@@ -38,7 +37,7 @@ public class Reader implements Runnable {
                         Batch batch = new Batch(++batchNumber, eachBatch);
                         log.debug("Batch No: {}", batchNumber);
                         sharedVariableManager.getMatcherQueue().put(batch);
-                        eachBatch.clear();
+                        eachBatch = new ArrayList<>();
                     }
                 } else emptyLines++;
             }
@@ -46,11 +45,11 @@ public class Reader implements Runnable {
             if (!eachBatch.isEmpty()) {
                 Batch batch = new Batch(++batchNumber, eachBatch);
                 sharedVariableManager.getMatcherQueue().put(batch);
-                eachBatch.clear();
             }
             reader.close();
-            sharedVariableManager.setEOF(new AtomicBoolean(true));
-            log.info("EOF Reached. ValidLines:{}, EmptyLines:{}", validLines, emptyLines);
+            log.debug("EOF Reached. ValidLines:{}, EmptyLines:{}", validLines, emptyLines);
+            log.info("Batch Count: {}", batchNumber);
+            readerUtils.sendPoisonPill();
         } catch (Exception e) {
             log.error("Exception while reading file: {}", e.getMessage());
         }

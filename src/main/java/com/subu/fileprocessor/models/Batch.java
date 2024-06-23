@@ -2,15 +2,23 @@ package com.subu.fileprocessor.models;
 
 import lombok.Getter;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @Getter
 public class Batch {
-    private Integer number;
-    private List<String> list;
+    private final Integer number;
+    private final ArrayList<String> list;
+    private final Boolean poisonPill;
 
-    public Batch(int number, List<String> list) {
+    public Batch(Integer number, ArrayList<String> list) {
         this.number = number;
         this.list = list;
+        this.poisonPill = false;
+    }
+
+    public Batch(Integer number, ArrayList<String> list, Boolean poisonPill) {
+        this.number = number;
+        this.list = list;
+        this.poisonPill = poisonPill;
     }
 }
