@@ -1,8 +1,8 @@
 package com.subu.fileprocessor.matcher;
 
 import com.subu.fileprocessor.configuration.SharedVariableManager;
-import com.subu.fileprocessor.models.Batch;
-import com.subu.fileprocessor.models.Offset;
+import com.subu.fileprocessor.dao.Batch;
+import com.subu.fileprocessor.dao.Offset;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

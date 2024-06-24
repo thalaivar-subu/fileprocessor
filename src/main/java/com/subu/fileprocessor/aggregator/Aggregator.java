@@ -1,7 +1,7 @@
 package com.subu.fileprocessor.aggregator;
 
 import com.subu.fileprocessor.configuration.SharedVariableManager;
-import com.subu.fileprocessor.models.Offset;
+import com.subu.fileprocessor.dao.Offset;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;

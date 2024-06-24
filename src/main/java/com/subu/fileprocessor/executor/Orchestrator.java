@@ -2,8 +2,8 @@ package com.subu.fileprocessor.executor;
 
 import com.subu.fileprocessor.aggregator.Aggregator;
 import com.subu.fileprocessor.configuration.SharedVariableManager;
+import com.subu.fileprocessor.dao.Offset;
 import com.subu.fileprocessor.matcher.Matcher;
-import com.subu.fileprocessor.models.Offset;
 import com.subu.fileprocessor.reader.Reader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,7 @@
 package com.subu.fileprocessor.reader;
 
 import com.subu.fileprocessor.configuration.SharedVariableManager;
-import com.subu.fileprocessor.models.Batch;
+import com.subu.fileprocessor.dao.Batch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

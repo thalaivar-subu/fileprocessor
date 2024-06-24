@@ -1,10 +1,11 @@
-package com.subu.fileprocessor.models;
+package com.subu.fileprocessor.dao;
 
+import lombok.Data;
 import lombok.Getter;
 
 import java.util.ArrayList;
 
-@Getter
+@Data
 public class Batch {
     private final Integer number;
     private final ArrayList<String> list;

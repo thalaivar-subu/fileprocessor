@@ -1,7 +1,7 @@
 package com.subu.fileprocessor.configuration;
 
-import com.subu.fileprocessor.models.Batch;
-import com.subu.fileprocessor.models.Offset;
+import com.subu.fileprocessor.dao.Batch;
+import com.subu.fileprocessor.dao.Offset;
 import lombok.Getter;
 import lombok.Setter;
 
