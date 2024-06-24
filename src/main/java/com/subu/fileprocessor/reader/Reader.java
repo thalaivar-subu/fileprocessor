@@ -32,7 +32,8 @@ public class Reader implements Runnable {
             while ((line = reader.readLine()) != null) {
                 eachBatch.add(line);
                 if (eachBatch.size() % batchSize == 0) {
-                    Batch batch = new Batch(++batchNumber, eachBatch, charOffset);
+                    ++batchNumber;
+                    Batch batch = new Batch(batchNumber, eachBatch, batchNumber == 1 ? 0L : charOffset);
                     log.debug("Batch No: {}", batchNumber);
                     sharedVariableManager.getMatcherQueue().put(batch);
                     eachBatch = new ArrayList<>();
