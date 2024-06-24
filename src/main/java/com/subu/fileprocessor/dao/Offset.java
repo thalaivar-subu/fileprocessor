@@ -1,7 +1,6 @@
 package com.subu.fileprocessor.dao;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 

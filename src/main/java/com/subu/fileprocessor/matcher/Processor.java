@@ -24,7 +24,7 @@ public class Processor implements Callable<HashMap<String, ArrayList<Offset>>> {
         log.debug("Matcher Batch Number: {}, threadNumber: {}", batch.getNumber(), Thread.currentThread().getName());
         HashMap<String, ArrayList<Offset>> offsetMap = new HashMap<>();
         AtomicInteger lineNumber = new AtomicInteger((batch.getNumber() - 1) * 1000);
-        batch.getList().parallelStream().forEach(line -> {
+        batch.getList().forEach(line -> {
             lineNumber.getAndIncrement();
             if (!line.trim().isEmpty()) {
                 sharedVariableManager.getInputTextMap().forEach(word -> {
