@@ -40,7 +40,7 @@ public class Matcher implements Callable<List<Future<HashMap<String, ArrayList<O
     }
 
     private boolean isPoisonPill(Batch batch) {
-        boolean flag = batch.getList() == null && batch.getNumber() == null;
+        boolean flag = batch.getList() == null && batch.getNumber() == null && batch.getPreviousBatchCharOffset() == null;
         log.debug("Poison Pill Received");
         return flag;
     }

@@ -27,19 +27,21 @@ public class Reader implements Runnable {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             ArrayList<String> eachBatch = new ArrayList<>();
             int batchNumber = 0;
+            long charOffset = 0;
             String line;
             while ((line = reader.readLine()) != null) {
                 eachBatch.add(line);
                 if (eachBatch.size() % batchSize == 0) {
-                    Batch batch = new Batch(++batchNumber, eachBatch);
+                    Batch batch = new Batch(++batchNumber, eachBatch, charOffset);
                     log.debug("Batch No: {}", batchNumber);
                     sharedVariableManager.getMatcherQueue().put(batch);
                     eachBatch = new ArrayList<>();
                 }
+                charOffset += line.length();
             }
             // Process any remaining lines (last batch)
             if (!eachBatch.isEmpty()) {
-                Batch batch = new Batch(++batchNumber, eachBatch);
+                Batch batch = new Batch(++batchNumber, eachBatch, charOffset);
                 sharedVariableManager.getMatcherQueue().put(batch);
             }
             reader.close();

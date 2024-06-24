@@ -13,7 +13,7 @@ public class Utils {
 
     public void sendPoisonPill() throws InterruptedException {
         log.debug("Sending Poison Pill");
-        Batch batch = new Batch(null, null);
+        Batch batch = new Batch(null, null, null);
         sharedVariableManager.getMatcherQueue().put(batch);
     }
 }

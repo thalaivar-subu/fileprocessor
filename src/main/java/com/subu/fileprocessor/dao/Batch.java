@@ -10,4 +10,5 @@ import java.util.ArrayList;
 public class Batch {
     private final Integer number;
     private final ArrayList<String> list;
+    private final Long previousBatchCharOffset;
 }

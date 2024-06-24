@@ -26,20 +26,19 @@ public class Processor implements Callable<HashMap<String, ArrayList<Offset>>> {
         log.debug("Matcher Batch Number: {}, threadNumber: {}", batch.getNumber(), Thread.currentThread().getName());
         List<String> lines = batch.getList();
         long lineCount = ((long) (batch.getNumber() - 1) * batchSize);
-        long charCount = sharedVariableManager.getOverallCharOffset().get();
+        long charCount = batch.getPreviousBatchCharOffset();
         for (String line : lines) {
             lineCount++;
             processLine(line, offsetMap, lineCount, charCount);
             charCount += line.length();
         }
-        updateSharedState(charCount);
         return offsetMap;
     }
 
     private void processLine(String line, HashMap<String, ArrayList<Offset>> offsetMap, long lineOffset, long charCount) {
         if (!line.isEmpty()) {
             sharedVariableManager.getInputTextMap().forEach(word -> {
-                int wordIndex = line.toLowerCase().indexOf(word);
+                long wordIndex = line.toLowerCase().indexOf(word);
                 if (wordIndex != -1 && isExactMatch(line, wordIndex, word)) {
                     long charOffset = charCount + wordIndex;
                     Offset newOffset = new Offset(lineOffset, charOffset);
@@ -50,13 +49,9 @@ public class Processor implements Callable<HashMap<String, ArrayList<Offset>>> {
         }
     }
 
-    private void updateSharedState(long charCount) {
-        sharedVariableManager.getOverallCharOffset().getAndUpdate(v -> v + charCount);
-    }
-
-    private boolean isExactMatch(String line, int index, String word) {
-        boolean beforeBoundary = (index == 0 || !Character.isLetterOrDigit(line.charAt(index - 1)));
-        boolean afterBoundary = (index + word.length() == line.length() || !Character.isLetterOrDigit(line.charAt(index + word.length())));
+    private boolean isExactMatch(String line, long index, String word) {
+        boolean beforeBoundary = (index == 0 || !Character.isLetterOrDigit(line.charAt((int) index - 1)));
+        boolean afterBoundary = ((index + word.length()) == line.length() || !Character.isLetterOrDigit(line.charAt((int) (index + word.length()))));
         return beforeBoundary && afterBoundary;
     }
 }

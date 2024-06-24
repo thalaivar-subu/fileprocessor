@@ -24,9 +24,9 @@ public class Application implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         long startTime = System.currentTimeMillis();
-        long memoryBeforeOrchestator = getUsedMemory();
+        long memoryBeforeOrchestrator = getUsedMemory();
         orchestrator.start();
-        log.info("Memory used by orchestator: {} mb", (getUsedMemory() - memoryBeforeOrchestator));
+        log.info("Memory used by orchestator: {} mb", (getUsedMemory() - memoryBeforeOrchestrator));
         log.info("Total time taken by orchestator: {} ms", System.currentTimeMillis() - startTime);
     }
 }
