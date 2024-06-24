@@ -23,20 +23,18 @@ public class Processor implements Callable<HashMap<String, ArrayList<Offset>>> {
 
     @Override
     public HashMap<String, ArrayList<Offset>> call() {
-        synchronized (sharedVariableManager) {
-            HashMap<String, ArrayList<Offset>> offsetMap = new HashMap<>();
-            log.debug("Matcher Batch Number: {}, threadNumber: {}", batch.getNumber(), Thread.currentThread().getName());
-            List<String> lines = batch.getList();
-            BigInteger lineCount = new BigInteger(String.valueOf((batch.getNumber() - 1) * batchSize));
-            BigInteger charCount = new BigInteger(String.valueOf(sharedVariableManager.getOverallCharOffset().get()));
-            for (String line : lines) {
-                lineCount = lineCount.add(new BigInteger("1"));
-                processLine(line, offsetMap, lineCount, charCount);
-                charCount = charCount.add(new BigInteger(String.valueOf(line.length())));
-            }
-            updateSharedState(lineCount, charCount);
-            return offsetMap;
+        HashMap<String, ArrayList<Offset>> offsetMap = new HashMap<>();
+        log.debug("Matcher Batch Number: {}, threadNumber: {}", batch.getNumber(), Thread.currentThread().getName());
+        List<String> lines = batch.getList();
+        BigInteger lineCount = new BigInteger(String.valueOf((batch.getNumber() - 1) * batchSize));
+        BigInteger charCount = new BigInteger(String.valueOf(sharedVariableManager.getOverallCharOffset().get()));
+        for (String line : lines) {
+            lineCount = lineCount.add(new BigInteger("1"));
+            processLine(line, offsetMap, lineCount, charCount);
+            charCount = charCount.add(new BigInteger(String.valueOf(line.length())));
         }
+        updateSharedState(lineCount, charCount);
+        return offsetMap;
     }
 
     private void processLine(String line, HashMap<String, ArrayList<Offset>> offsetMap, BigInteger lineOffset, BigInteger charCount) {
