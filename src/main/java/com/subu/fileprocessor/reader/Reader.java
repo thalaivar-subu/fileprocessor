@@ -23,6 +23,7 @@ public class Reader implements Runnable {
 
     @Override
     public void run() {
+        log.info("Started Reading File");
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             ArrayList<String> eachBatch = new ArrayList<>();
             int batchNumber = 0;

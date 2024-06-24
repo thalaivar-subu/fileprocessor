@@ -42,7 +42,7 @@ public class Aggregator {
                 count.getAndIncrement();
             }
         });
-        matches.append("\nMatches (").append(count.get()).append(")\n");
+        matches.append("Matches (").append(count.get()).append(")\n");
         return this;
     }
 
@@ -64,7 +64,7 @@ public class Aggregator {
     }
 
     public void logNonMatches() {
-        nonMatches.append("\nNon Matches ");
+        nonMatches.append("Non Matches ");
         AtomicInteger count = new AtomicInteger();
         ArrayList<String> listOfNonMatches = new ArrayList<>();
         sharedVariableManager.getInputTextMap().forEach(x -> {

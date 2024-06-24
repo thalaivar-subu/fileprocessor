@@ -26,7 +26,7 @@ public class Matcher implements Callable<List<Future<HashMap<String, ArrayList<O
         try {
             while (true) {
                 Batch batch = sharedVariableManager.getMatcherQueue().take();
-                if (batch.getPoisonPill()) break;
+                if (isPoisonPill(batch)) break;
                 offsetMapListFuture.add(matcherExecutor.submit(new Processor(batch, sharedVariableManager)));
             }
         } catch (Exception e) {
@@ -34,5 +34,11 @@ public class Matcher implements Callable<List<Future<HashMap<String, ArrayList<O
             Thread.currentThread().interrupt();
         }
         return offsetMapListFuture;
+    }
+
+    private boolean isPoisonPill(Batch batch) {
+        boolean flag = batch.getList() == null && batch.getNumber() == null;
+        log.debug("Poison Pill Received");
+        return flag;
     }
 }
