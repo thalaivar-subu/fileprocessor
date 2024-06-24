@@ -27,19 +27,14 @@ public class Reader implements Runnable {
             ArrayList<String> eachBatch = new ArrayList<>();
             int batchNumber = 0;
             String line;
-            int emptyLines = 0;
-            int validLines = 0;
             while ((line = reader.readLine()) != null) {
-                if (!line.trim().isEmpty()) {
-                    validLines++;
-                    eachBatch.add(line);
-                    if (eachBatch.size() % batchSize == 0) {
-                        Batch batch = new Batch(++batchNumber, eachBatch);
-                        log.debug("Batch No: {}", batchNumber);
-                        sharedVariableManager.getMatcherQueue().put(batch);
-                        eachBatch = new ArrayList<>();
-                    }
-                } else emptyLines++;
+                eachBatch.add(line);
+                if (eachBatch.size() % batchSize == 0) {
+                    Batch batch = new Batch(++batchNumber, eachBatch);
+                    log.debug("Batch No: {}", batchNumber);
+                    sharedVariableManager.getMatcherQueue().put(batch);
+                    eachBatch = new ArrayList<>();
+                }
             }
             // Process any remaining lines (last batch)
             if (!eachBatch.isEmpty()) {
@@ -47,8 +42,7 @@ public class Reader implements Runnable {
                 sharedVariableManager.getMatcherQueue().put(batch);
             }
             reader.close();
-            log.debug("EOF Reached. ValidLines:{}, EmptyLines:{}", validLines, emptyLines);
-            log.info("Batch Count: {}", batchNumber);
+            log.info("EOF Reached. Batch Count: {}", batchNumber);
             readerUtils.sendPoisonPill();
         } catch (Exception e) {
             log.error("Exception while reading file: {}", e.getMessage());

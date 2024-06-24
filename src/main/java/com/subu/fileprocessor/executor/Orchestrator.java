@@ -34,19 +34,11 @@ public class Orchestrator {
                 new Matcher(sharedVariableManager, matcherExecutor)
         ).get();
         readerFuture.get();
-
-        HashMap<String, ArrayList<Offset>> offsetMap = new HashMap<>();
-        for (Future<HashMap<String, ArrayList<Offset>>> future : matcherFutures) {
-            HashMap<String, ArrayList<Offset>> currentOffsetMap = future.get();
-            currentOffsetMap.forEach((k, v) -> {
-                ArrayList<Offset> currentOffset = offsetMap.containsKey(k) ? offsetMap.get(k) : new ArrayList<>();
-                currentOffset.addAll(v);
-                offsetMap.put(k, currentOffset);
-            });
-        }
-        Aggregator.display(offsetMap);
-        log.info("OffsetMap Size: {}", offsetMap.size());
-        Cleanup.start(readerExecutor);
-        Cleanup.start(matcherExecutor);
+        new Aggregator(matcherFutures, sharedVariableManager)
+                .aggregate()
+                .logMatchesCount()
+                .logMatches().
+                logNonMatches();
+        Cleanup.start(List.of(readerExecutor, matcherExecutor));
     }
 }

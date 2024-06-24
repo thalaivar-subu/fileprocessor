@@ -10,10 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Configuration
@@ -43,7 +42,10 @@ public class AppBeanConfiguration {
             @Value("${queue.size}") Integer queueSize,
             @Value("${words.to.match}") String wordsToMatch
     ) {
-        Set<String> inputTextMap = Collections.synchronizedSet(new HashSet<>(Arrays.asList(wordsToMatch.split(","))));
+        Set<String> inputTextMap = Arrays.stream(
+                        wordsToMatch.split(","))
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
         log.debug("Input Text Map Size: {}", inputTextMap.size());
         return new SharedVariableManager(
                 queueSize,
