@@ -51,6 +51,7 @@ public class Processor implements Callable<HashMap<String, ArrayList<Offset>>> {
     }
 
     private void updateSharedState(long charCount) {
+        sharedVariableManager.getOverallCharOffset().getAndUpdate(v -> v + charCount);
     }
 
     private boolean isExactMatch(String line, int index, String word) {
