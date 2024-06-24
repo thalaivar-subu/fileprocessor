@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Data
 public class SharedVariableManager {
-    private final AtomicLong overallLineOffset = new AtomicLong(0);
     private final AtomicLong overallCharOffset = new AtomicLong(0);
     private LinkedBlockingQueue<Batch> MatcherQueue;
     private Set<String> InputTextMap;

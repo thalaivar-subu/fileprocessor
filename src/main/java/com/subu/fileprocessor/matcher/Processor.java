@@ -29,13 +29,14 @@ public class Processor implements Callable<HashMap<String, ArrayList<Offset>>> {
         long charCount = sharedVariableManager.getOverallCharOffset().get();
         for (String line : lines) {
             lineCount++;
-            charCount += processLine(line, offsetMap, lineCount, charCount);
+            processLine(line, offsetMap, lineCount, charCount);
+            charCount += line.length();
         }
-        updateSharedState(lineCount, charCount);
+        updateSharedState(charCount);
         return offsetMap;
     }
 
-    private long processLine(String line, HashMap<String, ArrayList<Offset>> offsetMap, long lineOffset, long charCount) {
+    private void processLine(String line, HashMap<String, ArrayList<Offset>> offsetMap, long lineOffset, long charCount) {
         if (!line.isEmpty()) {
             sharedVariableManager.getInputTextMap().forEach(word -> {
                 int wordIndex = line.toLowerCase().indexOf(word);
@@ -47,12 +48,9 @@ public class Processor implements Callable<HashMap<String, ArrayList<Offset>>> {
                 }
             });
         }
-        return line.length();
     }
 
-    private void updateSharedState(long lineCount, long charCount) {
-        sharedVariableManager.getOverallLineOffset().addAndGet(lineCount);
-        sharedVariableManager.getOverallCharOffset().addAndGet(charCount);
+    private void updateSharedState(long charCount) {
     }
 
     private boolean isExactMatch(String line, int index, String word) {
