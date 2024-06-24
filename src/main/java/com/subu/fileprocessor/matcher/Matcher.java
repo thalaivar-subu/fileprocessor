@@ -6,6 +6,7 @@ import com.subu.fileprocessor.dao.Offset;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,8 @@ import java.util.concurrent.Future;
 public class Matcher implements Callable<List<Future<HashMap<String, ArrayList<Offset>>>>> {
     private final SharedVariableManager sharedVariableManager;
     private final ExecutorService matcherExecutor;
+    @Value("${batch.size}")
+    private final Integer batchSize;
 
     @Override
     public List<Future<HashMap<String, ArrayList<Offset>>>> call() {
@@ -27,7 +30,7 @@ public class Matcher implements Callable<List<Future<HashMap<String, ArrayList<O
             while (true) {
                 Batch batch = sharedVariableManager.getMatcherQueue().take();
                 if (isPoisonPill(batch)) break;
-                offsetMapListFuture.add(matcherExecutor.submit(new Processor(batch, sharedVariableManager)));
+                offsetMapListFuture.add(matcherExecutor.submit(new Processor(batch, batchSize, sharedVariableManager)));
             }
         } catch (Exception e) {
             log.error("Exception while matching file: {} ", e.getMessage());

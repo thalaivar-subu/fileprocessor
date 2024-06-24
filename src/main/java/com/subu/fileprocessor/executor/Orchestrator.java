@@ -8,6 +8,7 @@ import com.subu.fileprocessor.reader.Reader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -27,11 +28,13 @@ public class Orchestrator {
     private final Reader reader;
     private final ExecutorService matcherParentExecutor = Executors.newSingleThreadExecutor();
     private final ExecutorService readerExecutor = Executors.newSingleThreadExecutor();
+    @Value("${batch.size}")
+    private final Integer batchSize;
 
     public void start() throws ExecutionException, InterruptedException {
         Future<?> readerFuture = readerExecutor.submit(reader);
         List<Future<HashMap<String, ArrayList<Offset>>>> matcherFutures = matcherParentExecutor.submit(
-                new Matcher(sharedVariableManager, matcherExecutor)
+                new Matcher(sharedVariableManager, matcherExecutor, batchSize)
         ).get();
         readerFuture.get();
         new Aggregator(matcherFutures, sharedVariableManager)

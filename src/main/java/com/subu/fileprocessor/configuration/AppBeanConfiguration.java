@@ -34,7 +34,7 @@ public class AppBeanConfiguration {
             @Value("${matcher.thread.count}") Integer matcherThreadCount,
             SharedVariableManager sharedVariableManager,
             Reader reader) {
-        return new Orchestrator(sharedVariableManager, Executors.newFixedThreadPool(matcherThreadCount), reader);
+        return new Orchestrator(sharedVariableManager, Executors.newFixedThreadPool(matcherThreadCount), reader, batchSize);
     }
 
     @Bean
