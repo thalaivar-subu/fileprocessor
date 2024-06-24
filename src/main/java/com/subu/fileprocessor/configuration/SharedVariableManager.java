@@ -5,12 +5,12 @@ import lombok.Data;
 
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Data
 public class SharedVariableManager {
-    private final AtomicInteger overallLineOffset = new AtomicInteger(0);
-    private final AtomicInteger overallCharOffset = new AtomicInteger(0);
+    private final AtomicLong overallLineOffset = new AtomicLong(0);
+    private final AtomicLong overallCharOffset = new AtomicLong(0);
     private LinkedBlockingQueue<Batch> MatcherQueue;
     private Set<String> InputTextMap;
 

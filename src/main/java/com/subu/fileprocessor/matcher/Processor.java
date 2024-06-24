@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,34 +25,34 @@ public class Processor implements Callable<HashMap<String, ArrayList<Offset>>> {
         HashMap<String, ArrayList<Offset>> offsetMap = new HashMap<>();
         log.debug("Matcher Batch Number: {}, threadNumber: {}", batch.getNumber(), Thread.currentThread().getName());
         List<String> lines = batch.getList();
-        BigInteger lineCount = new BigInteger(String.valueOf((batch.getNumber() - 1) * batchSize));
-        BigInteger charCount = new BigInteger(String.valueOf(sharedVariableManager.getOverallCharOffset().get()));
+        long lineCount = ((long) (batch.getNumber() - 1) * batchSize);
+        long charCount = sharedVariableManager.getOverallCharOffset().get();
         for (String line : lines) {
-            lineCount = lineCount.add(new BigInteger("1"));
-            processLine(line, offsetMap, lineCount, charCount);
-            charCount = charCount.add(new BigInteger(String.valueOf(line.length())));
+            lineCount++;
+            charCount += processLine(line, offsetMap, lineCount, charCount);
         }
         updateSharedState(lineCount, charCount);
         return offsetMap;
     }
 
-    private void processLine(String line, HashMap<String, ArrayList<Offset>> offsetMap, BigInteger lineOffset, BigInteger charCount) {
+    private long processLine(String line, HashMap<String, ArrayList<Offset>> offsetMap, long lineOffset, long charCount) {
         if (!line.isEmpty()) {
             sharedVariableManager.getInputTextMap().forEach(word -> {
                 int wordIndex = line.toLowerCase().indexOf(word);
                 if (wordIndex != -1 && isExactMatch(line, wordIndex, word)) {
-                    BigInteger charOffset = new BigInteger(String.valueOf(charCount.intValue() + wordIndex));
+                    long charOffset = charCount + wordIndex;
                     Offset newOffset = new Offset(lineOffset, charOffset);
                     ArrayList<Offset> offset = offsetMap.computeIfAbsent(word, _ -> new ArrayList<>());
                     offset.add(newOffset);
                 }
             });
         }
+        return line.length();
     }
 
-    private void updateSharedState(BigInteger lineCount, BigInteger charCount) {
-        sharedVariableManager.getOverallLineOffset().addAndGet(lineCount.intValue());
-        sharedVariableManager.getOverallCharOffset().addAndGet(charCount.intValue());
+    private void updateSharedState(long lineCount, long charCount) {
+        sharedVariableManager.getOverallLineOffset().addAndGet(lineCount);
+        sharedVariableManager.getOverallCharOffset().addAndGet(charCount);
     }
 
     private boolean isExactMatch(String line, int index, String word) {
