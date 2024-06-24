@@ -17,18 +17,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class Processor implements Callable<HashMap<String, ArrayList<Offset>>> {
     private final Batch batch;
-    private final SharedVariableManager sharedVariableManager;
-    private final AtomicInteger charNumber = new AtomicInteger(0);
     private final AtomicInteger lineNumber = new AtomicInteger(0);
+    private final AtomicInteger charNumber = new AtomicInteger(0);
+    private final HashMap<String, ArrayList<Offset>> offsetMap = new HashMap<>();
+    private final SharedVariableManager sharedVariableManager; // Synchronize
 
     @Override
     public HashMap<String, ArrayList<Offset>> call() {
         synchronized (sharedVariableManager) {
             log.debug("Matcher Batch Number: {}, threadNumber: {}", batch.getNumber(), Thread.currentThread().getName());
-            HashMap<String, ArrayList<Offset>> offsetMap = new HashMap<>();
-            batch.getList().forEach(tempLine -> {
+            batch.getList().forEach(line -> {
                 lineNumber.incrementAndGet();
-                String line = tempLine.trim();
+                charNumber.addAndGet(line.length());
                 if (!line.isEmpty()) {
                     sharedVariableManager.getInputTextMap().forEach(word -> {
                         int wordIndex = line.toLowerCase().indexOf(word);
@@ -42,7 +42,6 @@ public class Processor implements Callable<HashMap<String, ArrayList<Offset>>> {
                         }
                     });
                 }
-                charNumber.addAndGet(line.length());
             });
             sharedVariableManager.getOverallLineOffset().addAndGet(lineNumber.get());
             sharedVariableManager.getOverallCharOffset().addAndGet(charNumber.get());
