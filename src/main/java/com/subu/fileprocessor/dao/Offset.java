@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 public class Offset {
-    private final long lineOffset;
-    private final long charOffset;
+
+  private final long lineOffset;
+  private final long charOffset;
 }
 

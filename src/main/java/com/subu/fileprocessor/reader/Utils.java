@@ -9,11 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class Utils {
-    private final SharedVariableManager sharedVariableManager;
 
-    public void sendPoisonPill() throws InterruptedException {
-        log.debug("Sending Poison Pill");
-        Batch batch = new Batch(null, null, null);
-        sharedVariableManager.getMatcherQueue().put(batch);
-    }
+  private final SharedVariableManager sharedVariableManager;
+
+  public void sendPoisonPill() throws InterruptedException {
+    log.debug("Sending Poison Pill");
+    Batch batch = new Batch(null, null, null);
+    sharedVariableManager.getMatcherQueue().put(batch);
+  }
 }
